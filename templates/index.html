@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            margin-top: 0px;
+        }
+        .container p{
+            text-align:center;
+            margin-top: 0%;
+            color: green;
+            margin-bottom: 10px;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0px;
+            color: rgb(110, 25, 54);
+        }
+        label {
+            margin: 10px 0;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(203, 135, 8);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: rgb(58, 58, 209);
+        }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+        }
+        .row1{
+            background-color: rgb(159, 143, 71);
+            max-width: 800px;
+            height: 6px;
+            margin: auto;
+            padding: 20px; 
+            margin-top: 0%;           
+        }
+        .row1 .container{
+            display: block;
+            margin-top: 0px;
+        }
+        form label{
+            text-align: center;
+            color: red;
+        }
+        hr{
+            color: indigo;
+            margin-top: 0px;
+        }
+        .res{
+            color: green;
+            background-color: aqua;
+        }
+        body{
+            background-image: url("static/14.avif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="row1">
+        <h2>Welcome to Car Price Predictor</h2>
+    </div>
+    <div class="container">
+        <p>This App predicts the Price of a Car you want to sell. Try filing the details below</p>
+        <hr>
+        <form id="predictForm">
+            <label for="name">Select the Car Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter Car Name" required>
+            <label for="company">Select the Car Company:</label>
+            <select id="company" name="company" required>
+                {% for company in companies %}
+                <option value="{{ company }}">{{ company }}</option>
+                {% endfor %}
+            </select>
+            <label for="year">Select the Year of purchase:</label>
+            <input type="number" id="year" name="year" min="1900" max="2019" placeholder="Enter the Year" required>
+            <label for="kms">Enter the Number of KMs Driven:</label>
+            <input type="number" id="kms" name="kms" placeholder="Enter Number of KM Driven" required>
+            <label for="fuel_type">Fuel Type:</label>
+            <select id="fuel_type" name="fuel_type" required>
+                {% for fuel in fuel_types %}
+                <option value="{{ fuel }}">{{ fuel }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Predict Price</button>
+        </form>
+        <b><div class="res" id="result"></div></b>
+    </div>
+
+    <script>
+        document.getElementById('predictForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(this);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/predict', true);
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.response);
+                    document.getElementById('result').innerHTML = `Predicted Price: ₹${response.predicted_price.toFixed(2)}`;
+                } else {
+                    document.getElementById('result').innerHTML = 'Error predicting price. Please try again.';
+                }
+            };
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
